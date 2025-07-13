@@ -1,0 +1,133 @@
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class ATM {
+    private Map<String, Account> accounts;
+    private Scanner scanner;
+
+    public ATM() {
+        accounts = new HashMap<>();
+        scanner = new Scanner(System.in);
+
+        // Initialize some accounts for testing
+        accounts.put("1234", new Account("1234", "John Doe", 1000.0));
+        accounts.put("5678", new Account("5678", "Jane Doe", 500.0));
+    }
+
+    public void run() {
+        System.out.println("Welcome to the ATM!");
+
+        while (true) {
+            System.out.print("Enter your account number (or 'exit' to quit): ");
+            String accountNumber = scanner.nextLine();
+
+            if (accountNumber.equalsIgnoreCase("exit")) {
+                break;
+            }
+
+            if (accounts.containsKey(accountNumber)) {
+                Account account = accounts.get(accountNumber);
+                authenticateAccount(account);
+            } else {
+                System.out.println("Account not found. Please try again.");
+            }
+        }
+    }
+
+    private void authenticateAccount(Account account) {
+        System.out.print("Enter your PIN: ");
+        String pin = scanner.nextLine();
+
+        if (pin.equals(account.getPin())) {
+            System.out.println("Login successful!");
+            performTransactions(account);
+        } else {
+            System.out.println("Invalid PIN. Please try again.");
+        }
+    }
+
+    private void performTransactions(Account account) {
+        while (true) {
+            System.out.println("\nChoose an option:");
+            System.out.println("1. Check balance");
+            System.out.println("2. Withdraw cash");
+            System.out.println("3. Deposit cash");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left-over
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Your balance is: $" + account.getBalance());
+                    break;
+                case 2:
+                    System.out.print("Enter amount to withdraw: $");
+                    double withdrawAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline left-over
+                    account.withdraw(withdrawAmount);
+                    break;
+                case 3:
+                    System.out.print("Enter amount to deposit: $");
+                    double depositAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline left-over
+                    account.deposit(depositAmount);
+                    break;
+                case 4:
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ATM atm = new ATM();
+        atm.run();
+    }
+}
+
+class Account {
+    private String accountNumber;
+    private String pin;
+    private String accountHolder;
+    private double balance;
+
+    public Account(String accountNumber, String accountHolder, double balance) {
+        this.accountNumber = accountNumber;
+        this.pin = accountNumber; // Simple PIN for demonstration purposes
+        this.accountHolder = accountHolder;
+        this.balance = balance;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawal successful. Your new balance is: $" + balance);
+        } else {
+            System.out.println("Insufficient funds or invalid amount.");
+        }
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposit successful. Your new balance is: $" + balance);
+        } else {
+            System.out.println("Invalid amount.");
+        }
+    }
+}
+```
